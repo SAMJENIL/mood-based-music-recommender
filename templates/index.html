@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood-Based Music Recommender</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle("light-mode");
+        }
+
+        async function getRecommendations() {
+            const text = document.getElementById("userInput").value;
+            const resultDiv = document.getElementById("results");
+            resultDiv.innerHTML = "";
+
+            if (!text) {
+                resultDiv.innerHTML = "<p class='error'>Please enter how you feel!</p>";
+                return;
+            }
+
+            const response = await fetch("/recommend", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                resultDiv.innerHTML = `<p class='error'>${data.error}</p>`;
+                return;
+            }
+
+            resultDiv.innerHTML = `<h2>Mood Detected: <span class='mood'>${data.mood.toUpperCase()}</span></h2>`;
+            resultDiv.innerHTML += "<h3>Recommended Songs:</h3>";
+
+            data.songs.forEach(song => {
+                resultDiv.innerHTML += `
+                    <div class="song">
+                        <p><strong>${song.name}</strong> - ${song.artist}</p>
+                        <a href="${song.url}" target="_blank">🎵 Listen on Spotify</a>
+                    </div>
+                `;
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="theme-toggle">
+        <button onclick="toggleTheme()">🌙 Toggle Theme</button>
+    </div>
+    
+    <div class="container">
+        <h1>🎶 Mood-Based Music Recommender</h1>
+        <p>Describe your mood, and we'll suggest the perfect songs!</p>
+        <textarea id="userInput" placeholder="I'm feeling happy today..."></textarea>
+        <button onclick="getRecommendations()">Get Songs</button>
+        <div id="results"></div>
+    </div>
+</body>
+</html>
