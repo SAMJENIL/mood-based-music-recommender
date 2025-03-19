@@ -1,5 +1,4 @@
 flask
 gunicorn
 nltk
-spotipy-oauth2
 spotipy
