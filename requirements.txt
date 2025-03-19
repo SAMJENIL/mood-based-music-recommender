@@ -1,0 +1,4 @@
+flask
+gunicorn
+nltk
+spotify.oauth2
