@@ -1,4 +1,5 @@
 flask
 gunicorn
 nltk
-spotify.oauth2
+spotipy-oauth2
+spotipy
